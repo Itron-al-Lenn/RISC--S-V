@@ -87,35 +87,36 @@ async def reg_file_basic(dut):
 async def reg_file_random_access(dut):
     """Test random access patterns in register file"""
     
-    import random
+    for _ in range(50):
+        import random
 
-    # Setup clock
-    clock = Clock(dut.clock, 10, units="ns")
-    cocotb.start_soon(clock.start())
-    
-    # Initialize
-    dut.write_enable.value = 0
-    await RisingEdge(dut.clock)
-    
-    # Test random values to random registers (except x0)
-    test_values = {}
-    for i in range(10):
-        reg = random.randint(1, 31)  # Skip reg 0
-        value = random.randint(0, 0xFFFFFFFF)
-        test_values[reg] = value
+        # Setup clock
+        clock = Clock(dut.clock, 10, units="ns")
+        cocotb.start_soon(clock.start())
         
-        # Write the value
-        dut.write_enable.value = 1
-        dut.rd_address.value = reg
-        dut.rd_data.value = value
+        # Initialize
+        dut.write_enable.value = 0
         await RisingEdge(dut.clock)
-    
-    # Disable writes
-    dut.write_enable.value = 0
-    await RisingEdge(dut.clock)
-    
-    # Read back and verify all values
-    for reg, expected_value in test_values.items():
-        dut.rs1_address.value = reg
-        await Timer(1, units="ns")
-        assert int(dut.rs1_data.value) == expected_value, f"Random test failed: reg[{reg}]=0x{int(dut.rs1_data.value):x}, expected=0x{expected_value:x}"
+        
+        # Test random values to random registers (except x0)
+        test_values = {}
+        for i in range(10):
+            reg = random.randint(1, 31)  # Skip reg 0
+            value = random.randint(0, 0xFFFFFFFF)
+            test_values[reg] = value
+            
+            # Write the value
+            dut.write_enable.value = 1
+            dut.rd_address.value = reg
+            dut.rd_data.value = value
+            await RisingEdge(dut.clock)
+        
+        # Disable writes
+        dut.write_enable.value = 0
+        await RisingEdge(dut.clock)
+        
+        # Read back and verify all values
+        for reg, expected_value in test_values.items():
+            dut.rs1_address.value = reg
+            await Timer(1, units="ns")
+            assert int(dut.rs1_data.value) == expected_value, f"Random test failed: reg[{reg}]=0x{int(dut.rs1_data.value):x}, expected=0x{expected_value:x}"

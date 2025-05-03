@@ -9,7 +9,7 @@ module reg_file (
     output [31:0] rs1_data,
     output [31:0] rs2_data
 );
-  logic [31:0] register[31];
+  logic [31:0] register[32];
 
   // Read ports for rs1 and rs2
   assign rs1_data = register[rs1_address];
