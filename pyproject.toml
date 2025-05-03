@@ -1,0 +1,18 @@
+[project]
+name = "risc-v"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "argcomplete>=3.6.2",
+  "cocotb>=1.9.2",
+  "pytest>=8.3.5",
+  "pytest-xdist>=3.6.1",
+]
+
+[tool.basedpyright]
+typeCheckingMode = "basic"
