@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# Runs pytest before merging to main and only merges when all tests run successfully
+
+. "$(git --exec-path)/git-sh-setup"
+
+USAGE="usage: $0"
+LONG_USAGE="This hook runs tests before allowing merges to the main branch."
+
+require_work_tree
+
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+if [ "$current_branch" = "main" ]; then
+  echo "Running tests before merge to main..."
+
+  output=$(python -m pytest 2>&1)
+  test_status=$?
+
+  if [ $test_status -ne 0 ]; then
+    die "Tests failed. Aborting merge.\n$output"
+  fi
+
+  echo "Tests passed. Proceeding with merge."
+fi
+
+echo "$(cd_to_toplevel && pwd)"
+
+exit 0
