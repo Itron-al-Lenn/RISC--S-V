@@ -16,3 +16,6 @@ dev = [
 
 [tool.basedpyright]
 typeCheckingMode = "basic"
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore:Python runners"]
