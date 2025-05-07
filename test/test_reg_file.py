@@ -1,4 +1,4 @@
-from test.runner import runner
+from test.util import runner
 
 import cocotb
 from cocotb.clock import Clock
