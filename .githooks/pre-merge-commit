@@ -10,7 +10,7 @@ LONG_USAGE="This hook runs tests before allowing merges to the main branch."
 require_work_tree
 
 current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
-if [ "$current_branch" = "main" ]; then
+if [ "$current_branch" == "main" ]; then
   echo "Running tests before merge to main..."
 
   output=$(python -m pytest 2>&1)
