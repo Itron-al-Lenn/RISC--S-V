@@ -7,3 +7,6 @@ for hook in "$(pwd)"/.githooks/*; do
     ln -sfv "$hook" "$(pwd)/.git/hooks/$hook_name"
   fi
 done
+
+echo "Setup git 'main' branch protection rules..."
+git config branch.main.mergeoptions "--no-ff"
