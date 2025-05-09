@@ -1,4 +1,5 @@
-import types::alu_operation_e;
+`timescale 1ns / 1ps
+import types::*;
 
 module alu (
     output logic [31:0] result_o,
@@ -7,6 +8,8 @@ module alu (
     input alu_funct7_e funct7_i,
     input alu_funct3_e funct3_i
 );
+  logic [31:0] op2;
+
   always_comb begin
     case (funct7_i)
       NEG: op2 = -operand_2_i;

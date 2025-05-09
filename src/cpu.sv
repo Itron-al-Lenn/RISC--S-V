@@ -3,8 +3,7 @@
 import types::*;
 
 module cpu #(
-    parameter int MEM_SIZE = 1024,
-    parameter string INSTRUCTION_FILE = ""
+    parameter int MEM_SIZE = 1024
 ) (
     input logic clock,
     input logic reset
@@ -52,7 +51,7 @@ module cpu #(
   end
 
   // Simple next PC logic (could be enhanced for branches/jumps)
-  assign next_pc = pc + 4;
+  assign next_pc = pc + 1;
 
   always_comb begin
     reg_write_enable = 1'b0;
@@ -85,8 +84,7 @@ module cpu #(
 
   // Module instantiations
   inst_mem #(
-      .MEM_SIZE(MEM_SIZE),
-      .INSTRUCTION_FILE(INSTRUCTION_FILE)
+      .MEM_SIZE(MEM_SIZE)
   ) instruction_memory (
       .address_i(pc),
       .instruction_o(instruction)
