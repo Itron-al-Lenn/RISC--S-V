@@ -1,4 +1,4 @@
-import types::inst_format_e;
+import types::*;
 
 module decoder (
     input logic [31:0] inst_i,

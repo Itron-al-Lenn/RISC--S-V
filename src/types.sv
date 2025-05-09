@@ -6,7 +6,9 @@ package types;
 
   typedef enum logic [2:0] {
     ADD = 3'b000,
-    AND = 3'b111
+    AND = 3'b111,
+    OR  = 3'b110,
+    XOR = 3'b100
   } alu_funct3_e;
 
   typedef enum {

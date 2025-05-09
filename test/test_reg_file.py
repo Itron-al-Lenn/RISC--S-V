@@ -6,7 +6,7 @@ from cocotb.triggers import RisingEdge, Timer
 
 
 def test_reg_file():
-    runner('reg_file', ['reg_file.sv'])
+    runner('reg_file')
 
 @cocotb.test()
 async def reg_file_basic(dut):

@@ -5,11 +5,14 @@ from cocotb.runner import get_runner
 
 PROJ_PATH = Path(os.path.dirname(__file__)).parent
 
-def runner(feature: str, srcs: list[str], instruction_file: None | Path = None, parameters: list[tuple[str, str]] = [], clean = True, test_module: None | str = None):
+def runner(feature: str, instruction_file: Path = Path(""), parameters: list[tuple[str, str]] = [], clean: bool = True, test_module: None | str = None):
     if test_module == None:
         test_module = f"test.test_{feature}"
         
-    sources = [PROJ_PATH / "src" / src for src in srcs]
+    sources = [f for f in (PROJ_PATH / "src").iterdir() if f.is_file()]
+    sources.sort(key=lambda f: 0 if f.name == "types.sv" else 1)
+    for s in sources:
+        print(s)
     build_args = [f'-DINSTRUCTION_FILE="{instruction_file}"']
     for parameter in parameters:
         build_args.append(f"-P{feature}.{parameter[0]}={parameter[1]}")
