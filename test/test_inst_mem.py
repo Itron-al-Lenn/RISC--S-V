@@ -7,7 +7,7 @@ from cocotb.triggers import Timer
 INSTRUCTION_FILE = PROJ_PATH / 'test' / 'instructions' / 'basic.hex'
 
 def test_inst_mem():
-    runner('inst_mem', ['inst_mem.sv'],
+    runner('inst_mem',
            instruction_file=INSTRUCTION_FILE
            )
 
