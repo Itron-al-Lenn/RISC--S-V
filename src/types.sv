@@ -1,7 +1,7 @@
 package types;
   typedef enum logic [6:0] {
-    POS = 7'b0000000,
-    NEG = 7'b0100000
+    NORMAL = 7'b0000000,
+    ALT    = 7'b0100000
   } alu_funct7_e;
 
   typedef enum logic [2:0] {

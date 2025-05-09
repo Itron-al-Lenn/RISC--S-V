@@ -8,21 +8,25 @@ module alu (
     input alu_funct7_e funct7_i,
     input alu_funct3_e funct3_i
 );
-  logic [31:0] op2;
+  logic [4:0] shift_amt = operand_2_i[4:0];
 
   always_comb begin
-    case (funct7_i)
-      NEG: op2 = -operand_2_i;
-      default: op2 = operand_2_i;
-    endcase
+    case ({
+      funct7_i, funct3_i
+    })
+      // Numerical Operations
+      {NORMAL, ADD} : result_o = operand_1_i + operand_2_i;
+      {ALT,    ADD} : result_o = operand_1_i - operand_2_i;
 
-    case (funct3_i)
-      ADD: result_o = operand_1_i + op2;
-      AND: result_o = operand_1_i & op2;
-      OR: result_o = operand_1_i | op2;
-      XOR: result_o = operand_1_i ^ op2;
-      SLT: result_o = ($signed(operand_1_i) < $signed(op2)) ? 1 : 0;
-      SLTU: result_o = (operand_1_i < op2) ? 1 : 0;
+      // Bit Operations
+      {NORMAL, AND} : result_o = operand_1_i & operand_2_i;
+      {NORMAL, OR} :  result_o = operand_1_i | operand_2_i;
+      {NORMAL, XOR} : result_o = operand_1_i ^ operand_2_i;
+
+      // SLT
+      {NORMAL, SLT} :  result_o = ($signed(operand_1_i) < $signed(operand_2_i)) ? 1 : 0;
+      {NORMAL, SLTU} : result_o = (operand_1_i < operand_2_i) ? 1 : 0;
+
       default: result_o = 32'b0;
     endcase
   end
