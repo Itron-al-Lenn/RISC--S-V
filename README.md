@@ -13,7 +13,7 @@ Simple RISC-V implementation in SystemVerilog
 | sltiu       | ❌          | ❌     |
 | xori        | ❌          | ❌     |
 | ori         | ❌          | ❌     |
-| andi        | ❌          | ❌     |
+| andi        | ✔️          | ❌     |
 | slli        | ❌          | ❌     |
 | srli        | ❌          | ❌     |
 | srai        | ❌          | ❌     |
@@ -26,7 +26,7 @@ Simple RISC-V implementation in SystemVerilog
 | srl         | ❌          | ❌     |
 | sra         | ❌          | ❌     |
 | or          | ❌          | ❌     |
-| and         | ❌          | ❌     |
+| and         | ✔️          | ❌     |
 | fence       | ❌          | ❌     |
 | fence.i     | ❌          | ❌     |
 | csrrw       | ❌          | ❌     |

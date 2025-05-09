@@ -4,7 +4,10 @@ package types;
     NEG = 7'b0100000
   } alu_funct7_e;
 
-  typedef enum logic [2:0] {ADD = 3'b000} alu_funct3_e;
+  typedef enum logic [2:0] {
+    ADD = 3'b000,
+    AND = 3'b111
+  } alu_funct3_e;
 
   typedef enum {
     R_TYPE,
