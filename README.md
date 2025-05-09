@@ -9,8 +9,8 @@ Simple RISC-V implementation in SystemVerilog
 | lui         | ❌          | ❌     |
 | auipc       | ❌          | ❌     |
 | addi        | ✔️          | ❌     |
-| slti        | ❌          | ❌     |
-| sltiu       | ❌          | ❌     |
+| slti        | ✔️          | ❌     |
+| sltiu       | ✔️          | ❌     |
 | xori        | ✔️          | ❌     |
 | ori         | ✔️          | ❌     |
 | andi        | ✔️          | ❌     |
@@ -20,8 +20,8 @@ Simple RISC-V implementation in SystemVerilog
 | add         | ✔️          | ❌     |
 | sub         | ✔️          | ❌     |
 | sll         | ❌          | ❌     |
-| slt         | ❌          | ❌     |
-| sltu        | ❌          | ❌     |
+| slt         | ✔️          | ❌     |
+| sltu        | ✔️          | ❌     |
 | xor         | ✔️          | ❌     |
 | srl         | ❌          | ❌     |
 | sra         | ❌          | ❌     |
