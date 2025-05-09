@@ -9,9 +9,13 @@ module alu (
 );
   always_comb begin
     case (funct7_i)
+      NEG: op2 = -operand_2_i;
+      default: op2 = operand_2_i;
     endcase
 
     case (funct3_i)
+      ADD: result_o = operand_1_i + operand_2_i;
+      default: result_o = 32'b0;
     endcase
   end
 endmodule
