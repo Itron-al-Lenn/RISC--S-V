@@ -1,0 +1,26 @@
+#! /bin/bash
+
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+
+if [ "$current_branch" = "main" ]; then
+  echo "Can't close main"
+  exit 1
+fi
+
+echo "Checking out main branch..."
+git checkout main
+
+echo "Merging $current_branch into main..."
+if git merge "$current_branch"; then
+  echo "Merge successful. Pushing changes to remote..."
+  if git push origin main; then
+    echo "Push successful. Deleting local branch $current_branch..."
+    git branch -d "$current_branch"
+  else
+    echo "Push failed.  Resolve conflicts and try again."
+    exit 1
+  fi
+else
+  echo "Merge failed.  Resolve conflicts and try again."
+  exit 1
+fi
