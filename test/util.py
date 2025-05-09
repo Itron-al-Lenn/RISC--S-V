@@ -26,4 +26,6 @@ def runner(feature: str, instruction_file: Path = Path(""), parameters: list[tup
 def check_reg(dut, reg_num: int, expected_value: int):
     value = int(dut.registers.register.value[reg_num])
     assert value == expected_value, f"Register x{reg_num} should be {expected_value}, got {value}"
-
+    
+def to_signed32(val):
+    return val if val < 0x80000000 else val - 0x100000000

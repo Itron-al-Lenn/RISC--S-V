@@ -21,6 +21,8 @@ module alu (
       AND: result_o = operand_1_i & op2;
       OR: result_o = operand_1_i | op2;
       XOR: result_o = operand_1_i ^ op2;
+      SLT: result_o = ($signed(operand_1_i) < $signed(op2)) ? 1 : 0;
+      SLTU: result_o = (operand_1_i < op2) ? 1 : 0;
       default: result_o = 32'b0;
     endcase
   end
