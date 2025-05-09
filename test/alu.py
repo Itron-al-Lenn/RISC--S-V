@@ -5,6 +5,12 @@ from cocotb.triggers import Timer
 async def alu_test(dut, operand_1, operand_2, operator, expected_result):
     """Helper function to help test the ALU"""
     match operator:
+        case "OR" | "ORI":
+            dut.funct3_i.value = 0b110
+            dut.funct7_i.value = 0
+        case "XOR" | "XORI":
+            dut.funct3_i.value = 0b100
+            dut.funct7_i.value = 0
         case "AND" | "ANDI":
             dut.funct3_i.value = 0b111
             dut.funct7_i.value = 0
