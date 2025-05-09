@@ -10,7 +10,9 @@ package types;
     OR   = 3'b110,
     XOR  = 3'b100,
     SLT  = 3'b010,
-    SLTU = 3'b011
+    SLTU = 3'b011,
+    SLL  = 3'b001,
+    SRL  = 3'b101
   } alu_funct3_e;
 
   typedef enum {

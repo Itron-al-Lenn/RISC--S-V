@@ -13,14 +13,16 @@ module decoder (
 );
 
   assign opcode_o = inst_i[6:0];
-  assign rd_o     = inst_i[11:7];
+  assign rd_o = inst_i[11:7];
   assign funct3_o = inst_i[14:12];
-  assign rs1_o    = inst_i[19:15];
-  assign rs2_o    = inst_i[24:20];
-  assign funct7_o = (format_o == R_TYPE) ? inst_i[31:25] : 7'b0000000;
+  assign rs1_o = inst_i[19:15];
+  assign rs2_o = inst_i[24:20];
+  assign funct7_o = (format_o == R_TYPE || (opcode_o == 7'b0010011 && funct3_o == 3'b101))
+    ? inst_i[31:25]
+    : 7'b0000000;
 
   always_comb begin
-    unique case (inst_i[6:0])
+    case (opcode_o)
       7'b0110011:                         format_o = R_TYPE;
       7'b1100111, 7'b0000011, 7'b0010011: format_o = I_TYPE;
       7'b0100011:                         format_o = S_TYPE;
@@ -40,7 +42,7 @@ module decoder (
   };
 
   always_comb begin
-    unique case (format_o)
+    case (format_o)
       I_TYPE:  imm_o = imm_i;
       S_TYPE:  imm_o = imm_s;
       B_TYPE:  imm_o = imm_b;
