@@ -3,21 +3,21 @@ import types::inst_format_e;
 module decoder (
     input logic [31:0] inst_i,
     output inst_format_e format_o,
+    output logic [6:0] opcode_o,
+    output logic [2:0] funct3_o,
+    output logic [6:0] funct7_o,
     output logic [4:0] rs1_o,
     output logic [4:0] rs2_o,
     output logic [4:0] rd_o,
     output logic [31:0] imm_o
 );
-  logic [6:0] opcode;
-  logic [2:0] funct3;
-  logic [6:0] funct7;
 
-  assign opcode = instruction[6:0];
-  assign rd_o   = instruction[11:7];
-  assign funct3 = instruction[14:12];
-  assign rs1_o  = instruction[19:15];
-  assign rs2_o  = instruction[24:20];
-  assign funct7 = instruction[31:25];
+  assign opcode_o = instruction[6:0];
+  assign rd_o     = instruction[11:7];
+  assign funct3_o = instruction[14:12];
+  assign rs1_o    = instruction[19:15];
+  assign rs2_o    = instruction[24:20];
+  assign funct7_o = instruction[31:25];
 
   always_comb begin
     case (opcode)
