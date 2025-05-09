@@ -17,7 +17,7 @@ module alu (
     endcase
 
     case (funct3_i)
-      ADD: result_o = operand_1_i + operand_2_i;
+      ADD: result_o = operand_1_i + op2;
       default: result_o = 32'b0;
     endcase
   end

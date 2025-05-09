@@ -7,9 +7,9 @@ from cocotb.triggers import Timer
 INSTRUCTION_FILE = PROJ_PATH / 'test' / 'instructions' / 'basic.hex'
 
 def test_inst_mem():
-    runner('inst_mem', ['inst_mem.sv'], parameters=[
-        ("INSTRUCTION_FILE", f'"{INSTRUCTION_FILE.resolve()}"'),
-    ], clean=True)
+    runner('inst_mem', ['inst_mem.sv'],
+           instruction_file=INSTRUCTION_FILE
+           )
 
 def read_hex_file(file_path):
     instructions = {}
