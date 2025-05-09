@@ -1,3 +1,5 @@
+from test.util import check_reg
+
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge
@@ -21,15 +23,7 @@ async def apu(dut):
     for _ in range(6):
         await RisingEdge(dut.clock)
     
-    # Check register values via the register file
-    reg = dut.registers.register
-    x1 = int(reg.value[1])
-    x2 = int(reg.value[2])
-    x3 = int(reg.value[3])
-    x4 = int(reg.value[4])
-    
-    # Verify results
-    assert x1 == 10, f"Register x1 should be 10, got {x1}"
-    assert x2 == 15, f"Register x2 should be 15, got {x2}"
-    assert x3 == 25, f"Register x3 should be 25, got {x3}"
-    assert x4 == 15, f"Register x4 should be 15, got {x4}"
+    check_reg(dut, 1, 10)
+    check_reg(dut, 2, 15)
+    check_reg(dut, 3, 25)
+    check_reg(dut, 4, 15)

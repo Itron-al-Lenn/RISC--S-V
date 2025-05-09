@@ -19,3 +19,8 @@ def runner(feature: str, srcs: list[str], instruction_file: None | Path = None, 
     runner.build(waves=True, sources=sources, hdl_toplevel=feature, clean=clean, build_args=build_args)
 
     runner.test(waves=True, hdl_toplevel=feature, test_module=test_module)
+
+def check_reg(dut, reg_num: int, expected_value: int):
+    value = int(dut.registers.register.value[reg_num])
+    assert value == expected_value, f"Register x{reg_num} should be {expected_value}, got {value}"
+
