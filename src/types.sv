@@ -1,6 +1,9 @@
+typedef enum logic [6:0] {
+} alu_funct7_e;
+
 typedef enum logic [2:0] {
   // Will be added when implementing the operations
-} alu_operation_e;
+} alu_funct3_e;
 
 typedef enum {
   R_TYPE,
