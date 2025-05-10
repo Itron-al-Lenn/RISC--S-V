@@ -7,8 +7,6 @@ from cocotb.triggers import RisingEdge
 
 @cocotb.test()
 async def cpu(dut):
-    """Test CPU execution of SLT(I) and SLT(I)U instructions"""
-
     # Setup clock
     clock = Clock(dut.clock, 10, units="ns")
     cocotb.start_soon(clock.start())
@@ -20,7 +18,7 @@ async def cpu(dut):
     dut.reset.value = 0
 
     # Run for sufficient clock cycles
-    for _ in range(8):
+    for _ in range(7):
         await RisingEdge(dut.clock)
     
     # Verify results

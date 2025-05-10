@@ -24,4 +24,15 @@ package types;
     J_TYPE,
     INVALID_TYPE
   } inst_format_e;
+
+  typedef enum {
+    WB_ALU,
+    WB_IMM,
+    WB_PC_IMM
+  } wb_sel_e;
+
+  typedef enum logic {
+    REG = 1'b0,
+    IMM = 1'b1
+  } alu_src_e;
 endpackage

@@ -35,8 +35,10 @@ async def inst_mem_basic(dut):
     instructions = read_hex_file(INSTRUCTION_FILE)
     
     num_test_addresses = 10
-    random_addresses = [random.randint(0, 1024) for _ in range(num_test_addresses)]
-    file_addresses = list(instructions.keys()) # Also test addresses that for sure are != 0
+    # Generate byte addresses that are multiples of 4 (word-aligned)
+    random_addresses = [random.randint(0, 1023) * 4 for _ in range(num_test_addresses)]
+    file_addresses = [addr * 4 for addr in instructions.keys()]  # Convert word indices to byte addresses
+
     if file_addresses:
         test_addresses = random_addresses + random.sample(file_addresses, min(10, len(file_addresses)))
     else:
@@ -44,18 +46,19 @@ async def inst_mem_basic(dut):
     
     dut._log.info(f"Testing addresses: {test_addresses}")
     
-    for addr in test_addresses:
-        dut.address_i.value = addr
+    for byte_addr in test_addresses:
+        dut.address_i.value = byte_addr
         await Timer(1, units='ns')
         
+        word_addr = byte_addr // 4
         actual_value = int(dut.instruction_o.value)
-        expected_value = instructions.get(addr, 0)
+        expected_value = instructions.get(word_addr, 0)
         
-        print(f"Debug: At address {addr}, got {hex(actual_value)}, expected {hex(expected_value)}")
+        print(f"Debug: At byte address {byte_addr} (word {word_addr}), got {hex(actual_value)}, expected {hex(expected_value)}")
         
-        assert dut.instruction_o.value == expected_value, \
-            f"At address {addr}, expected {hex(expected_value)}, got {hex(actual_value)}"
+        assert actual_value == expected_value, \
+            f"At address {byte_addr} (word {word_addr}), expected {hex(expected_value)}, got {hex(actual_value)}"
         
-        dut._log.info(f"Address {addr}: Instruction {hex(actual_value)} - PASS")
+        dut._log.info(f"Address {byte_addr} (word {word_addr}): Instruction {hex(actual_value)} - PASS")
     
     dut._log.info("All instruction memory tests passed!")

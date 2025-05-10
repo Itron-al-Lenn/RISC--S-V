@@ -7,8 +7,6 @@ from cocotb.triggers import RisingEdge
 
 @cocotb.test()
 async def apu(dut):
-    """Test CPU execution of ADD, ADDI and SUB instructions"""
-    
     # Setup clock
     clock = Clock(dut.clock, 10, units="ns")
     cocotb.start_soon(clock.start())
@@ -20,7 +18,7 @@ async def apu(dut):
     dut.reset.value = 0
     
     # Run for 6 clock cycles (more than enough for our 4 instructions)
-    for _ in range(6):
+    for _ in range(5):
         await RisingEdge(dut.clock)
     
     check_reg(dut, 1, 10)

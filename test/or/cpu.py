@@ -7,8 +7,6 @@ from cocotb.triggers import RisingEdge
 
 @cocotb.test()
 async def apu(dut):
-    """Test CPU execution of OR(I) and XOR(I) instructions"""
-    
     # Setup clock
     clock = Clock(dut.clock, 10, units="ns")
     cocotb.start_soon(clock.start())

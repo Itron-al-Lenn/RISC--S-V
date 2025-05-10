@@ -12,6 +12,14 @@ module decoder (
     output logic [31:0] imm_o
 );
 
+  wire [31:0] imm_i = {{20{inst_i[31]}}, inst_i[31:20]};
+  wire [31:0] imm_s = {{20{inst_i[31]}}, inst_i[31:25], inst_i[11:7]};
+  wire [31:0] imm_b = {{19{inst_i[31]}}, inst_i[31], inst_i[7], inst_i[30:25], inst_i[11:8], 1'b0};
+  wire [31:0] imm_u = {inst_i[31:12], 12'b0};
+  wire [31:0] imm_j = {
+    {11{inst_i[31]}}, inst_i[31], inst_i[19:12], inst_i[20], inst_i[30:21], 1'b0
+  };
+
   assign opcode_o = inst_i[6:0];
   assign rd_o = inst_i[11:7];
   assign funct3_o = inst_i[14:12];
@@ -31,17 +39,7 @@ module decoder (
       7'b1101111:                         format_o = J_TYPE;
       default:                            format_o = INVALID_TYPE;
     endcase
-  end
 
-  wire [31:0] imm_i = {{20{inst_i[31]}}, inst_i[31:20]};
-  wire [31:0] imm_s = {{20{inst_i[31]}}, inst_i[31:25], inst_i[11:7]};
-  wire [31:0] imm_b = {{19{inst_i[31]}}, inst_i[31], inst_i[7], inst_i[30:25], inst_i[11:8], 1'b0};
-  wire [31:0] imm_u = {inst_i[31:12], 12'b0};
-  wire [31:0] imm_j = {
-    {11{inst_i[31]}}, inst_i[31], inst_i[19:12], inst_i[20], inst_i[30:21], 1'b0
-  };
-
-  always_comb begin
     case (format_o)
       I_TYPE:  imm_o = imm_i;
       S_TYPE:  imm_o = imm_s;

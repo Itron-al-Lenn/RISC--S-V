@@ -18,7 +18,7 @@ async def cpu(dut):
     dut.reset.value = 0
 
     # Run for sufficient clock cycles
-    for _ in range(16):
+    for _ in range(9):
         await RisingEdge(dut.clock)
     
     check_reg(dut, 1, 0xFFFFFFFF)

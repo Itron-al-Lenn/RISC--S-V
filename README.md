@@ -6,8 +6,8 @@ Simple RISC-V implementation in SystemVerilog
 
 | Instruction | Implemented | Tested |
 | ----------- | ----------- | ------ |
-| lui         | ❌          | ❌     |
-| auipc       | ❌          | ❌     |
+| lui         | ✔️          | ❌     |
+| auipc       | ✔️          | ❌     |
 | addi        | ✔️          | ❌     |
 | slti        | ✔️          | ❌     |
 | sltiu       | ✔️          | ❌     |
