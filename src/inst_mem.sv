@@ -15,5 +15,5 @@ module inst_mem #(
     $readmemh(`INSTRUCTION_FILE, mem);
   end
 
-  assign instruction_o = mem[address_i];
+  assign instruction_o = mem[address_i[31:2]];
 endmodule

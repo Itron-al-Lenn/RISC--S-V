@@ -16,7 +16,7 @@ module cpu #(
   logic [31:0] instruction;
 
   // Decode Signals
-  types::inst_format_e inst_format;
+  inst_format_e inst_format;
   logic [4:0] rs1_addr;
   logic [4:0] rs2_addr;
   logic [4:0] rd_addr;
@@ -35,11 +35,12 @@ module cpu #(
   logic [31:0] alu_result;
   logic [31:0] alu_operand1;
   logic [31:0] alu_operand2;
-  types::alu_funct7_e alu_funct7;
-  types::alu_funct3_e alu_funct3;
+  alu_funct7_e alu_funct7;
+  alu_funct3_e alu_funct3;
 
   // Control signals
-  logic alu_src;  // 0: register, 1: immediate
+  alu_src_e alu_src;
+  wb_sel_e wb_sel;
 
   // Program Counter Logic
   always_ff @(posedge clock or posedge reset) begin
@@ -50,25 +51,38 @@ module cpu #(
     end
   end
 
-  // Simple next PC logic (could be enhanced for branches/jumps)
-  assign next_pc = pc + 1;
+  assign next_pc = pc + 4;
 
   always_comb begin
     reg_write_enable = 1'b0;
-    alu_src = 1'b0;
+    alu_src = REG;
 
-    case (inst_format)
-      R_TYPE: begin
+    case (opcode)
+      7'b0110111: begin  // LUI
         reg_write_enable = 1'b1;
-        alu_src = 1'b0;  // Use rs2
+        wb_sel           = WB_IMM;
       end
-      I_TYPE: begin
+
+      7'b0010111: begin  // AUIPC
         reg_write_enable = 1'b1;
-        alu_src = 1'b1;  // Use immediate
+        wb_sel           = WB_PC_IMM;
       end
+
+      7'b0110011: begin  // R-Type ALU
+        reg_write_enable = 1'b1;
+        alu_src          = REG;
+        wb_sel           = WB_ALU;
+      end
+
+      7'b0010011: begin  // I-Type ALU
+        reg_write_enable = 1'b1;
+        alu_src          = IMM;
+        wb_sel           = WB_ALU;
+      end
+
       default: begin
         reg_write_enable = 1'b0;
-        alu_src = 1'b0;
+        wb_sel           = WB_ALU;
       end
     endcase
   end
@@ -76,11 +90,21 @@ module cpu #(
   // ALU definitions
   assign alu_operand1 = rs1_data;
   assign alu_operand2 = alu_src ? imm : rs2_data;
-  assign alu_funct3 = types::alu_funct3_e'(funct3);
-  assign alu_funct7 = types::alu_funct7_e'(funct7);
+  assign alu_funct3   = alu_funct3_e'(funct3);
+  assign alu_funct7   = alu_funct7_e'(funct7);
 
-  // Write back
-  assign rd_data = alu_result;
+  logic [31:0] wb_data;
+
+  always_comb begin
+    case (wb_sel)
+      WB_ALU:    wb_data = alu_result;
+      WB_IMM:    wb_data = imm;
+      WB_PC_IMM: wb_data = pc + imm;
+      default:   wb_data = 32'b0;
+    endcase
+  end
+
+  assign rd_data = wb_data;
 
   // Module instantiations
   inst_mem #(
