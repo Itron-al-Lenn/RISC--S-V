@@ -28,7 +28,8 @@ package types;
   typedef enum {
     WB_ALU,
     WB_IMM,
-    WB_PC_IMM
+    WB_PC_IMM,
+    WB_RAM
   } wb_sel_e;
 
   typedef enum logic {
@@ -36,9 +37,9 @@ package types;
     IMM = 1'b1
   } alu_src_e;
 
-  typedef enum logic [2:0] {
-    BYTE = 3'b000,
-    HALF_WORD = 3'b001,
-    WORD = 3'b010
-  } load_size_e;
+  typedef enum logic [1:0] {
+    BYTE = 2'b00,
+    HALF_WORD = 2'b01,
+    WORD = 2'b10
+  } ram_size_e;
 endpackage

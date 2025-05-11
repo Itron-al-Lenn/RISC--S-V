@@ -38,6 +38,14 @@ module cpu #(
   alu_funct7_e         alu_funct7;
   alu_funct3_e         alu_funct3;
 
+  // RAM Signals
+  logic         [31:0] ram_out;
+  logic         [31:0] ram_addr;
+  logic                ram_wr_enable;
+  logic                ram_unsigned;
+  ram_size_e           ram_size;
+  logic         [31:0] ram_data;
+
   // Control signals
   alu_src_e            alu_src;
   wb_sel_e             wb_sel;
@@ -53,9 +61,13 @@ module cpu #(
 
   assign next_pc = pc + 4;
 
+  wire funct3_2 = funct3[2];
+  wire [1:0] funct3_10 = funct3[1:0];
+
   // Control Flow
   always_comb begin
     reg_wr_enable = 1'b0;
+    ram_wr_enable = 1'b0;
     alu_src = REG;
 
     case (opcode)
@@ -81,11 +93,21 @@ module cpu #(
         wb_sel        = WB_ALU;
       end
 
+      7'b0000011: begin  // Load
+        ram_unsigned = funct3_2;
+        ram_addr     = rs1_data + imm;
+        ram_size     = ram_size_e'(funct3_10);
+        wb_sel       = WB_RAM;
+      end
+
       default: begin
         wb_sel = WB_ALU;
       end
     endcase
   end
+
+  // RAM definitions
+  assign ram_data = rs2_data;
 
   // ALU definitions
   assign alu_operand1 = rs1_data;
@@ -100,6 +122,7 @@ module cpu #(
       WB_ALU:    wb_data = alu_result;
       WB_IMM:    wb_data = imm;
       WB_PC_IMM: wb_data = pc + imm;
+      WB_RAM:    wb_data = ram_out;
       default:   wb_data = 32'b0;
     endcase
   end
@@ -145,4 +168,13 @@ module cpu #(
       .funct3_i(alu_funct3)
   );
 
+  ram random_access_memory (
+      .clk_i(clock),
+      .address_i(ram_addr),
+      .unsigned_i(ram_unsigned),
+      .size_i(ram_size),
+      .data_i(ram_data),
+      .wr_enable_i(ram_wr_enable),
+      .output_o(ram_out)
+  );
 endmodule

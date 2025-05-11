@@ -4,13 +4,13 @@ import types::*;
 module ram #(
     parameter int MEM_SIZE = 4096
 ) (
-    input  logic              clk_i,
-    input  logic       [31:0] address_i,
-    input  logic              sign_extend_i,
-    input  load_size_e        size_i,
-    input  logic       [31:0] data_i,
-    input  logic              wr_enable_i,
-    output logic       [31:0] output_o
+    input  logic             clk_i,
+    input  logic      [31:0] address_i,
+    input  logic             unsigned_i,
+    input  ram_size_e        size_i,
+    input  logic      [31:0] data_i,
+    input  logic             wr_enable_i,
+    output logic      [31:0] output_o
 );
   logic [31:0] mem[MEM_SIZE];
 
@@ -26,12 +26,12 @@ module ram #(
   always_ff @(posedge clk_i) begin
     case (size_i)
       BYTE: begin
-        if (sign_extend_i) read_data <= {{24{mem[addr][7]}}, mem[addr][7:0]};
-        else read_data <= {24'b0, mem[addr][7:0]};
+        if (unsigned_i) read_data <= {24'b0, mem[addr][7:0]};
+        else read_data <= {{24{mem[addr][7]}}, mem[addr][7:0]};
       end
       HALF_WORD: begin
-        if (sign_extend_i) read_data <= {{16{mem[addr][15]}}, mem[addr][15:0]};
-        else read_data <= {16'b0, mem[addr][15:0]};
+        if (unsigned_i) read_data <= {16'b0, mem[addr][15:0]};
+        else read_data <= {{16{mem[addr][15]}}, mem[addr][15:0]};
       end
       WORD:    read_data <= mem[addr];
       default: read_data <= 32'b0;
