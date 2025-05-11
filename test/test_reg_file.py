@@ -16,7 +16,7 @@ async def reg_file_basic(dut):
     cocotb.start_soon(clock.start())
     
     # Initialize inputs
-    dut.write_enable.value = 0
+    dut.wr_enable.value = 0
     dut.rd_address.value = 0
     dut.rs1_address.value = 0
     dut.rs2_address.value = 0
@@ -27,29 +27,29 @@ async def reg_file_basic(dut):
         await RisingEdge(dut.clock)
     
     # Test Case 1: Write to register 1 and read it back
-    dut.write_enable.value = 1
+    dut.wr_enable.value = 1
     dut.rd_address.value = 1
     dut.rd_data.value = 0xABCD1234
     await RisingEdge(dut.clock)
     
-    dut.write_enable.value = 0
+    dut.wr_enable.value = 0
     dut.rs1_address.value = 1
     await Timer(1, units="ns")  # Small delay for combinational read
     assert int(dut.rs1_data.value) == 0xABCD1234, f"TC1 Failed: rs1_data=0x{int(dut.rs1_data.value):x}, expected=0xABCD1234"
     
     # Test Case 2: Try writing to register 0 (should remain 0)
-    dut.write_enable.value = 1
+    dut.wr_enable.value = 1
     dut.rd_address.value = 0
     dut.rd_data.value = 0x12345678
     await RisingEdge(dut.clock)
     
-    dut.write_enable.value = 0
+    dut.wr_enable.value = 0
     dut.rs1_address.value = 0
     await Timer(1, units="ns")
     assert int(dut.rs1_data.value) == 0, f"TC2 Failed: rs1_data=0x{int(dut.rs1_data.value):x}, expected=0x0"
     
     # Test Case 3: Write multiple registers and read using both ports
-    dut.write_enable.value = 1
+    dut.wr_enable.value = 1
     dut.rd_address.value = 2
     dut.rd_data.value = 0xAAAA5555
     await RisingEdge(dut.clock)
@@ -58,7 +58,7 @@ async def reg_file_basic(dut):
     dut.rd_data.value = 0x55551111
     await RisingEdge(dut.clock)
     
-    dut.write_enable.value = 0
+    dut.wr_enable.value = 0
     dut.rs1_address.value = 2
     dut.rs2_address.value = 3
     await Timer(1, units="ns")
@@ -66,7 +66,7 @@ async def reg_file_basic(dut):
     assert int(dut.rs2_data.value) == 0x55551111, f"TC3 Failed rs2: rs2_data=0x{int(dut.rs2_data.value):x}, expected=0x55551111"
     
     # Test Case 4: Test write enable functionality
-    dut.write_enable.value = 0  # Disabled
+    dut.wr_enable.value = 0  # Disabled
     dut.rd_address.value = 4
     dut.rd_data.value = 0xDEADBEEF
     await RisingEdge(dut.clock)
@@ -78,7 +78,7 @@ async def reg_file_basic(dut):
     # If the register hasn't been written to, it might be x (undefined)
     # We'll check if it's not equal to 0xDEADBEEF, which is what we attempted to write
     if dut.rs1_data.value.is_resolvable:
-        assert int(dut.rs1_data.value) != 0xDEADBEEF, "TC4 Failed: Write occurred when write_enable=0"
+        assert int(dut.rs1_data.value) != 0xDEADBEEF, "TC4 Failed: Write occurred when wr_enable=0"
     else:
         # If the value is 'x' (undefined), that's acceptable for an uninitialized register
         dut._log.info("Register 4 has undefined value, which is acceptable for an unwritten register")
@@ -95,7 +95,7 @@ async def reg_file_random_access(dut):
         cocotb.start_soon(clock.start())
         
         # Initialize
-        dut.write_enable.value = 0
+        dut.wr_enable.value = 0
         await RisingEdge(dut.clock)
         
         # Test random values to random registers (except x0)
@@ -106,13 +106,13 @@ async def reg_file_random_access(dut):
             test_values[reg] = value
             
             # Write the value
-            dut.write_enable.value = 1
+            dut.wr_enable.value = 1
             dut.rd_address.value = reg
             dut.rd_data.value = value
             await RisingEdge(dut.clock)
         
         # Disable writes
-        dut.write_enable.value = 0
+        dut.wr_enable.value = 0
         await RisingEdge(dut.clock)
         
         # Read back and verify all values
