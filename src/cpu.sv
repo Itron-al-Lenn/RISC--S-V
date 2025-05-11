@@ -9,38 +9,38 @@ module cpu #(
     input logic reset
 );
   // Program Counter
-  logic [31:0] pc;
-  logic [31:0] next_pc;
+  logic         [31:0] pc;
+  logic         [31:0] next_pc;
 
   // Instruction Fetch
-  logic [31:0] instruction;
+  logic         [31:0] instruction;
 
   // Decode Signals
-  inst_format_e inst_format;
-  logic [4:0] rs1_addr;
-  logic [4:0] rs2_addr;
-  logic [4:0] rd_addr;
-  logic [31:0] imm;
-  logic [6:0] opcode;
-  logic [2:0] funct3;
-  logic [6:0] funct7;
+  inst_format_e        inst_format;
+  logic         [ 4:0] rs1_addr;
+  logic         [ 4:0] rs2_addr;
+  logic         [ 4:0] rd_addr;
+  logic         [31:0] imm;
+  logic         [ 6:0] opcode;
+  logic         [ 2:0] funct3;
+  logic         [ 6:0] funct7;
 
   // Register File Signals
-  logic reg_write_enable;
-  logic [31:0] rs1_data;
-  logic [31:0] rs2_data;
-  logic [31:0] rd_data;
+  logic                reg_write_enable;
+  logic         [31:0] rs1_data;
+  logic         [31:0] rs2_data;
+  logic         [31:0] rd_data;
 
   // ALU Signals
-  logic [31:0] alu_result;
-  logic [31:0] alu_operand1;
-  logic [31:0] alu_operand2;
-  alu_funct7_e alu_funct7;
-  alu_funct3_e alu_funct3;
+  logic         [31:0] alu_result;
+  logic         [31:0] alu_operand1;
+  logic         [31:0] alu_operand2;
+  alu_funct7_e         alu_funct7;
+  alu_funct3_e         alu_funct3;
 
   // Control signals
-  alu_src_e alu_src;
-  wb_sel_e wb_sel;
+  alu_src_e            alu_src;
+  wb_sel_e             wb_sel;
 
   // Program Counter Logic
   always_ff @(posedge clock or posedge reset) begin

@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 module reg_file (
-    input clock,
-    input write_enable,
-    input [4:0] rd_address,
-    input [4:0] rs1_address,
-    input [4:0] rs2_address,
-    input [31:0] rd_data,
+    input         clock,
+    input         write_enable,
+    input  [ 4:0] rd_address,
+    input  [ 4:0] rs1_address,
+    input  [ 4:0] rs2_address,
+    input  [31:0] rd_data,
     output [31:0] rs1_data,
     output [31:0] rs2_data
 );
