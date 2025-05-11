@@ -10,7 +10,7 @@ module inst_mem #(
 
 
   initial begin
-    for (int i = 0; i < MEM_SIZE; i++) mem[i] = 32'h0;
+    for (int i = 0; i < MEM_SIZE; i++) mem[i] = 32'b0;
 
     $readmemh(`INSTRUCTION_FILE, mem);
   end

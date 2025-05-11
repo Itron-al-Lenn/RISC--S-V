@@ -35,4 +35,10 @@ package types;
     REG = 1'b0,
     IMM = 1'b1
   } alu_src_e;
+
+  typedef enum logic [2:0] {
+    BYTE = 3'b000,
+    HALF_WORD = 3'b001,
+    WORD = 3'b010
+  } load_size_e;
 endpackage
