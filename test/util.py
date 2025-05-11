@@ -11,8 +11,6 @@ def runner(feature: str, instruction_file: Path = Path(""), parameters: list[tup
         
     sources = [f for f in (PROJ_PATH / "src").iterdir() if f.is_file()]
     sources.sort(key=lambda f: 0 if f.name == "types.sv" else 1)
-    for s in sources:
-        print(s)
     build_args = [f'-DINSTRUCTION_FILE="{instruction_file}"']
     for parameter in parameters:
         build_args.append(f"-P{feature}.{parameter[0]}={parameter[1]}")

@@ -1,15 +1,15 @@
 import types::*;
 
 module decoder (
-    input logic [31:0] inst_i,
-    output inst_format_e format_o,
-    output logic [6:0] opcode_o,
-    output logic [2:0] funct3_o,
-    output logic [6:0] funct7_o,
-    output logic [4:0] rs1_o,
-    output logic [4:0] rs2_o,
-    output logic [4:0] rd_o,
-    output logic [31:0] imm_o
+    input  logic         [31:0] inst_i,
+    output inst_format_e        format_o,
+    output logic         [ 6:0] opcode_o,
+    output logic         [ 2:0] funct3_o,
+    output logic         [ 6:0] funct7_o,
+    output logic         [ 4:0] rs1_o,
+    output logic         [ 4:0] rs2_o,
+    output logic         [ 4:0] rd_o,
+    output logic         [31:0] imm_o
 );
 
   wire [31:0] imm_i = {{20{inst_i[31]}}, inst_i[31:20]};
