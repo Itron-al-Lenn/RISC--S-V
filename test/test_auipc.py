@@ -1,4 +1,4 @@
-from test.util import PROJ_PATH, check_reg, runner
+from test.util import PROJ_PATH, check_reg, run_till_end, runner
 
 import cocotb
 from cocotb.clock import Clock
@@ -25,9 +25,7 @@ async def cpu(dut):
     await RisingEdge(dut.clock)
     dut.reset.value = 0
 
-    # Run for sufficient clock cycles
-    for _ in range(5):
-        await RisingEdge(dut.clock)
+    await run_till_end(dut, INSTRUCTION_FILE)
     
     check_reg(dut, 1, 0x0007b000)
     check_reg(dut, 2, 0x000ea004)
