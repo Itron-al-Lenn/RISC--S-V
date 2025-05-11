@@ -26,7 +26,7 @@ module cpu #(
   logic         [ 6:0] funct7;
 
   // Register File Signals
-  logic                reg_write_enable;
+  logic                reg_wr_enable;
   logic         [31:0] rs1_data;
   logic         [31:0] rs2_data;
   logic         [31:0] rd_data;
@@ -53,36 +53,36 @@ module cpu #(
 
   assign next_pc = pc + 4;
 
+  // Control Flow
   always_comb begin
-    reg_write_enable = 1'b0;
+    reg_wr_enable = 1'b0;
     alu_src = REG;
 
     case (opcode)
       7'b0110111: begin  // LUI
-        reg_write_enable = 1'b1;
-        wb_sel           = WB_IMM;
+        reg_wr_enable = 1'b1;
+        wb_sel        = WB_IMM;
       end
 
       7'b0010111: begin  // AUIPC
-        reg_write_enable = 1'b1;
-        wb_sel           = WB_PC_IMM;
+        reg_wr_enable = 1'b1;
+        wb_sel        = WB_PC_IMM;
       end
 
       7'b0110011: begin  // R-Type ALU
-        reg_write_enable = 1'b1;
-        alu_src          = REG;
-        wb_sel           = WB_ALU;
+        reg_wr_enable = 1'b1;
+        alu_src       = REG;
+        wb_sel        = WB_ALU;
       end
 
       7'b0010011: begin  // I-Type ALU
-        reg_write_enable = 1'b1;
-        alu_src          = IMM;
-        wb_sel           = WB_ALU;
+        reg_wr_enable = 1'b1;
+        alu_src       = IMM;
+        wb_sel        = WB_ALU;
       end
 
       default: begin
-        reg_write_enable = 1'b0;
-        wb_sel           = WB_ALU;
+        wb_sel = WB_ALU;
       end
     endcase
   end
@@ -90,8 +90,8 @@ module cpu #(
   // ALU definitions
   assign alu_operand1 = rs1_data;
   assign alu_operand2 = alu_src ? imm : rs2_data;
-  assign alu_funct3   = alu_funct3_e'(funct3);
-  assign alu_funct7   = alu_funct7_e'(funct7);
+  assign alu_funct3 = alu_funct3_e'(funct3);
+  assign alu_funct7 = alu_funct7_e'(funct7);
 
   logic [31:0] wb_data;
 
@@ -128,7 +128,7 @@ module cpu #(
 
   reg_file registers (
       .clock(clock),
-      .write_enable(reg_write_enable),
+      .wr_enable(reg_wr_enable),
       .rd_address(rd_addr),
       .rs1_address(rs1_addr),
       .rs2_address(rs2_addr),

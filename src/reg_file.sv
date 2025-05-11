@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 module reg_file (
     input         clock,
-    input         write_enable,
+    input         wr_enable,
     input  [ 4:0] rd_address,
     input  [ 4:0] rs1_address,
     input  [ 4:0] rs2_address,
@@ -24,7 +24,7 @@ module reg_file (
 
   // Write port for rd
   always_ff @(posedge clock) begin
-    if (write_enable) begin
+    if (wr_enable) begin
       // Only write if we are not on register x0
       if (rd_address != 5'b0) begin
         register[rd_address] <= rd_data;
