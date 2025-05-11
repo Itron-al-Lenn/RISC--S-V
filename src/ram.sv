@@ -12,40 +12,56 @@ module ram #(
     input  logic             wr_enable_i,
     output logic      [31:0] output_o
 );
-  logic [31:0] mem[MEM_SIZE];
+  logic [7:0] mem[4*MEM_SIZE];
+
+  wire [7:0] by;
+  wire by_sign;
+  assign by = mem[address_i];
+  assign by_sign = by[7];
+  wire [15:0] hw;
+  wire hw_sign;
+  assign hw = {mem[address_i+1], mem[address_i]};
+  assign hw_sign = hw[15];
+  wire [31:0] wd;
+  assign wd = {mem[address_i+3], mem[address_i+2], mem[address_i+1], mem[address_i]};
 
   initial begin
-    for (int i = 0; i < MEM_SIZE; i++) mem[i] = 32'b0;
+    for (int i = 0; i < 4 * MEM_SIZE; i++) mem[i] = 8'b0;
+    output_o = 32'b0;
   end
 
-  localparam int ADDRWIDTH = $clog2(MEM_SIZE);
-  logic [ADDRWIDTH-1:0] addr;
-  assign addr = address_i[ADDRWIDTH+1:2];
-
-  logic [31:0] read_data;
-  always_ff @(posedge clk_i) begin
+  // Read
+  always_comb begin
     case (size_i)
       BYTE: begin
-        if (unsigned_i) read_data <= {24'b0, mem[addr][7:0]};
-        else read_data <= {{24{mem[addr][7]}}, mem[addr][7:0]};
+        output_o = (unsigned_i) ? {24'b0, by} : {{24{by_sign}}, by};
       end
       HALF_WORD: begin
-        if (unsigned_i) read_data <= {16'b0, mem[addr][15:0]};
-        else read_data <= {{16{mem[addr][15]}}, mem[addr][15:0]};
+        output_o = (unsigned_i) ? {16'b0, hw} : {{16{hw_sign}}, hw};
       end
-      WORD:    read_data <= mem[addr];
-      default: read_data <= 32'b0;
+      WORD: begin
+        output_o = wd;
+      end
+      default: output_o = 32'b0;
     endcase
   end
-  assign output_o = read_data;
 
+  // Write
   always_ff @(posedge clk_i) begin
     if (wr_enable_i) begin
       case (size_i)
-        BYTE:      mem[addr][7:0] <= data_i[7:0];
-        HALF_WORD: mem[addr][15:0] <= data_i[15:0];
-        WORD:      mem[addr] <= data_i;
-        default:   ;
+        BYTE: mem[address_i] <= data_i[7:0];
+        HALF_WORD: begin
+          mem[address_i]   <= data_i[7:0];
+          mem[address_i+1] <= data_i[15:8];
+        end
+        WORD: begin
+          mem[address_i]   <= data_i[7:0];
+          mem[address_i+1] <= data_i[15:8];
+          mem[address_i+2] <= data_i[23:16];
+          mem[address_i+3] <= data_i[31:24];
+        end
+        default: ;
       endcase
     end
   end

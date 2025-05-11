@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from cocotb.runner import get_runner
+from cocotb.triggers import RisingEdge
 
 PROJ_PATH = Path(os.path.dirname(__file__)).parent
 
@@ -25,5 +26,24 @@ def check_reg(dut, reg_num: int, expected_value: int):
     value = int(dut.registers.register.value[reg_num])
     assert value == expected_value, f"Register x{reg_num} should be {expected_value:08X}, got {value:08X}"
     
+def check_ram(dut, address: int, expected_value: int):
+    ram = dut.random_access_memory.mem.value
+    value = (
+        int(ram[address]) |
+        (int(ram[address+1]) << 8) |
+        (int(ram[address+2]) << 16) |
+        (int(ram[address+3]) << 24)
+    )
+    assert value == expected_value, f"RAM at {address:08X} should be {expected_value:08X}, got {value:08X}"
+    
 def to_signed32(val):
     return val if val < 0x80000000 else val - 0x100000000
+    
+def count_lines(filename):
+    with open(filename, "r") as f:
+        return sum(1 for _ in f)
+
+async def run_till_end(dut, instruction_file, extra_cycles=2):
+    num_instructions = count_lines(instruction_file)
+    for _ in range(num_instructions + extra_cycles):
+        await RisingEdge(dut.clock)
