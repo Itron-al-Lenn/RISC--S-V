@@ -29,7 +29,9 @@ package types;
     WB_ALU,
     WB_IMM,
     WB_PC_IMM,
-    WB_RAM
+    WB_RAM,
+    WB_JAL,
+    WB_JALR
   } wb_sel_e;
 
   typedef enum logic {

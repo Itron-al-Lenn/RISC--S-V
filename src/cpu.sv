@@ -50,15 +50,6 @@ module cpu #(
   alu_src_e            alu_src;
   wb_sel_e             wb_sel;
 
-  // Program Counter Logic
-  always_ff @(posedge clock or posedge reset) begin
-    if (reset) begin
-      pc <= 32'h0;
-    end else begin
-      pc <= next_pc;
-    end
-  end
-
   assign next_pc = pc + 4;
 
   wire funct3_2 = funct3[2];
@@ -107,6 +98,17 @@ module cpu #(
         ram_size = ram_size_e'(funct3_10);
       end
 
+      7'b1101111: begin  // JAL
+        reg_wr_enable = 1'b1;
+        alu_src = IMM;
+        wb_sel = WB_JAL;
+      end
+
+      7'b1100111: begin  // JALR
+        reg_wr_enable = 1'b1;
+        wb_sel = WB_JALR;
+      end
+
       default: begin
         wb_sel = WB_ALU;
       end
@@ -124,12 +126,26 @@ module cpu #(
 
   always_comb begin
     case (wb_sel)
-      WB_ALU:    rd_data = alu_result;
-      WB_IMM:    rd_data = imm;
-      WB_PC_IMM: rd_data = pc + imm;
-      WB_RAM:    rd_data = ram_out;
-      default:   rd_data = 32'b0;
+      WB_ALU:          rd_data = alu_result;
+      WB_IMM:          rd_data = imm;
+      WB_PC_IMM:       rd_data = pc + imm;
+      WB_RAM:          rd_data = ram_out;
+      WB_JAL, WB_JALR: rd_data = next_pc;
+      default:         rd_data = 32'b0;
     endcase
+  end
+
+  // Program Counter Logic
+  always_ff @(posedge clock or posedge reset) begin
+    if (reset) begin
+      pc <= 32'h0;
+    end else begin
+      case (wb_sel)
+        WB_JAL:  pc <= pc + imm;
+        WB_JALR: pc <= (rs1_data + imm) & ~32'b00000000000000000000000000000001;
+        default: pc <= next_pc;
+      endcase
+    end
   end
 
   // Module instantiations
