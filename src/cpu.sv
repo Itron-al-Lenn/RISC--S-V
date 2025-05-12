@@ -9,51 +9,39 @@ module cpu #(
     input logic reset
 );
   // Program Counter
-  logic         [31:0] pc;
-  logic         [31:0] next_pc;
+  logic     [31:0] pc;
+  logic     [31:0] next_pc;
 
   // Instruction Fetch
-  logic         [31:0] instruction;
+  logic     [31:0] instruction;
 
   // Decode Signals
-  inst_format_e        inst_format;
-  logic         [ 4:0] rs1_addr;
-  logic         [ 4:0] rs2_addr;
-  logic         [ 4:0] rd_addr;
-  logic         [31:0] imm;
-  logic         [ 6:0] opcode;
-  logic         [ 2:0] funct3;
-  logic         [ 6:0] funct7;
+  logic     [ 4:0] rs1_addr;
+  logic     [ 4:0] rs2_addr;
+  logic     [ 4:0] rd_addr;
+  logic     [31:0] imm;
+  logic     [ 6:0] opcode;
+  logic     [ 2:0] funct3;
+  logic     [ 6:0] funct7;
 
   // Register File Signals
-  logic                reg_wr_enable;
-  logic         [31:0] rs1_data;
-  logic         [31:0] rs2_data;
-  logic         [31:0] rd_data;
+  logic            reg_wr_enable;
+  logic     [31:0] rs1_data;
+  logic     [31:0] rs2_data;
+  logic     [31:0] rd_data;
 
   // ALU Signals
-  logic         [31:0] alu_result;
-  logic         [31:0] alu_operand1;
-  logic         [31:0] alu_operand2;
-  alu_funct7_e         alu_funct7;
-  alu_funct3_e         alu_funct3;
+  logic     [31:0] alu_result;
 
   // RAM Signals
-  logic         [31:0] ram_out;
-  logic         [31:0] ram_addr;
-  logic                ram_wr_enable;
-  logic                ram_unsigned;
-  ram_size_e           ram_size;
-  logic         [31:0] ram_data;
+  logic     [31:0] ram_out;
+  logic            ram_wr_enable;
 
   // Control signals
-  alu_src_e            alu_src;
-  wb_sel_e             wb_sel;
+  alu_src_e        alu_src;
+  wb_sel_e         wb_sel;
 
   assign next_pc = pc + 4;
-
-  wire funct3_2 = funct3[2];
-  wire [1:0] funct3_10 = funct3[1:0];
 
   // Control Flow
   always_comb begin
@@ -86,16 +74,11 @@ module cpu #(
 
       7'b0000011: begin  // Load
         reg_wr_enable = 1'b1;
-        ram_unsigned  = funct3_2;
-        ram_addr      = rs1_data + imm;
-        ram_size      = ram_size_e'(funct3_10);
         wb_sel        = WB_RAM;
       end
 
       7'b0100011: begin  // Store
         ram_wr_enable = 1'b1;
-        ram_addr = rs1_data + imm;
-        ram_size = ram_size_e'(funct3_10);
       end
 
       7'b1101111: begin  // JAL
@@ -108,21 +91,8 @@ module cpu #(
         reg_wr_enable = 1'b1;
         wb_sel = WB_JALR;
       end
-
-      default: begin
-        wb_sel = WB_ALU;
-      end
     endcase
   end
-
-  // RAM definitions
-  assign ram_data = rs2_data;
-
-  // ALU definitions
-  assign alu_operand1 = rs1_data;
-  assign alu_operand2 = alu_src ? imm : rs2_data;
-  assign alu_funct3 = alu_funct3_e'(funct3);
-  assign alu_funct7 = alu_funct7_e'(funct7);
 
   always_comb begin
     case (wb_sel)
@@ -158,7 +128,6 @@ module cpu #(
 
   decoder instruction_decoder (
       .inst_i(instruction),
-      .format_o(inst_format),
       .opcode_o(opcode),
       .funct3_o(funct3),
       .funct7_o(funct7),
@@ -181,18 +150,18 @@ module cpu #(
 
   alu arithmetic_logic_unit (
       .result_o(alu_result),
-      .operand_1_i(alu_operand1),
-      .operand_2_i(alu_operand2),
-      .funct7_i(alu_funct7),
-      .funct3_i(alu_funct3)
+      .operand_1_i(rs1_data),
+      .operand_2_i(alu_src ? imm : rs2_data),
+      .funct7_i(alu_funct7_e'(funct7)),
+      .funct3_i(alu_funct3_e'(funct3))
   );
 
   ram random_access_memory (
       .clk_i(clock),
-      .address_i(ram_addr),
-      .unsigned_i(ram_unsigned),
-      .size_i(ram_size),
-      .data_i(ram_data),
+      .address_i(rs1_data + imm),
+      .unsigned_i(funct3[2]),
+      .size_i(ram_size_e'(funct3[1:0])),
+      .data_i(rs2_data),
       .wr_enable_i(ram_wr_enable),
       .output_o(ram_out)
   );

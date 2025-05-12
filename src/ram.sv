@@ -47,7 +47,7 @@ module ram #(
   end
 
   // Write
-  always_ff @(posedge clk_i) begin
+  always_ff @(negedge clk_i) begin
     if (wr_enable_i) begin
       case (size_i)
         BYTE: mem[address_i] <= data_i[7:0];
