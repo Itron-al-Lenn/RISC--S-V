@@ -1,4 +1,11 @@
 package types;
+  typedef enum logic [1:0] {
+    EQ = 2'b00,
+    NE = 2'b01,
+    LT = 2'b10,
+    GE = 2'b11
+  } branch_op_e;
+
   typedef enum logic [6:0] {
     NORMAL = 7'b0000000,
     ALT    = 7'b0100000
@@ -31,7 +38,8 @@ package types;
     WB_PC_IMM,
     WB_RAM,
     WB_JAL,
-    WB_JALR
+    WB_JALR,
+    WB_B
   } wb_sel_e;
 
   typedef enum logic {

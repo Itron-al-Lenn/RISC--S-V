@@ -37,6 +37,9 @@ module cpu #(
   logic     [31:0] ram_out;
   logic            ram_wr_enable;
 
+  // Branch comparsion
+  logic            branch_res;
+
   // Control signals
   alu_src_e        alu_src;
   wb_sel_e         wb_sel;
@@ -49,7 +52,7 @@ module cpu #(
     ram_wr_enable = 1'b0;
     alu_src = REG;
 
-    case (opcode)
+    unique case (opcode)
       7'b0110111: begin  // LUI
         reg_wr_enable = 1'b1;
         wb_sel        = WB_IMM;
@@ -91,6 +94,10 @@ module cpu #(
         reg_wr_enable = 1'b1;
         wb_sel = WB_JALR;
       end
+
+      7'b1100011: begin  // Branch
+        wb_sel = WB_B;
+      end
     endcase
   end
 
@@ -111,6 +118,7 @@ module cpu #(
       pc <= 32'h0;
     end else begin
       case (wb_sel)
+        WB_B:    pc <= (branch_res) ? pc + imm : next_pc;
         WB_JAL:  pc <= pc + imm;
         WB_JALR: pc <= (rs1_data + imm) & ~32'b00000000000000000000000000000001;
         default: pc <= next_pc;
@@ -164,5 +172,13 @@ module cpu #(
       .data_i(rs2_data),
       .wr_enable_i(ram_wr_enable),
       .output_o(ram_out)
+  );
+
+  branch_comp branch_comparsion (
+      .op1_i(rs1_data),
+      .op2_i(rs2_data),
+      .branch_op_i(branch_op_e'({funct3[2], funct3[0]})),
+      .unsigned_i(funct3[1]),
+      .result_o(branch_res)
   );
 endmodule
