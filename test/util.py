@@ -12,7 +12,8 @@ def runner(feature: str, instruction_file: Path = Path(""), parameters: list[tup
         
     sources = [f for f in (PROJ_PATH / "src").iterdir() if f.is_file()]
     sources.sort(key=lambda f: 0 if f.name == "types.sv" else 1)
-    build_args = [f'-DINSTRUCTION_FILE="{instruction_file}"']
+    plusarg = [f'+INSTRUCTION_FILE={instruction_file}']
+    build_args = []
     for parameter in parameters:
         build_args.append(f"-P{feature}.{parameter[0]}={parameter[1]}")
         
@@ -20,7 +21,7 @@ def runner(feature: str, instruction_file: Path = Path(""), parameters: list[tup
     runner = get_runner("icarus")
     runner.build(waves=True, sources=sources, hdl_toplevel=feature, clean=clean, build_args=build_args)
 
-    runner.test(waves=True, hdl_toplevel=feature, test_module=test_module)
+    runner.test(plusargs=plusarg, waves=True, hdl_toplevel=feature, test_module=test_module)
 
 def check_reg(dut, reg_num: int, expected_value: int):
     value = int(dut.registers.register.value[reg_num])
